@@ -107,14 +107,14 @@
             return chars;
         }
 
-        function getPasswordFromChars(arrChars) {
+        function getPasswordFromChars(chars) {
 
             var password = [];
-            while (arrChars.length > 0) {
-                var index = getRndInteger(0, arrChars.length);
-                var char = arrChars[index];
+            while (chars.length > 0) {
+                var index = getRndInteger(0, chars.length);
+                var char = chars[index];
                 password.push(char);
-                arrChars.splice(index, 1);
+                chars.splice(index, 1);
             }
 
             return password.join('');
@@ -139,27 +139,14 @@
     }
 
     var pwgen = new PasswordGenerator();
-
     document.getElementById("buttonGenerate").addEventListener('click', function() {
 
-        var settings = {
-            length: +document.getElementById('fieldLength').value,
-            numbers: +document.getElementById('fieldMinNumbers').value,
-            uppercase: +document.getElementById('fieldMinUppercase').value,
-            lowercase: +document.getElementById('fieldMinLowercase').value,
-            specialChars: +document.getElementById('fieldMinSpecialChars').value
-        }
-
-        console.log(settings);
-
-        var pw = pwgen.generatePassword(
-            settings.length,
-            settings.numbers,
-            settings.uppercase,
-            settings.lowercase,
-            settings.specialChars);
-
-        document.getElementById("fieldGeneratedPassword").value = pw;
+        document.getElementById("fieldGeneratedPassword").value = pwgen.generatePassword(
+            +document.getElementById('fieldLength').value,
+            +document.getElementById('fieldMinNumbers').value,
+            +document.getElementById('fieldMinUppercase').value,
+            +document.getElementById('fieldMinLowercase').value,
+            +document.getElementById('fieldMinSpecialChars').value);;
     });
 
 </script>
