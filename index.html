@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Javascript Password Generator</title>
+
+    <link rel="stylesheet" media="all" href="css/bootstrap.min.css">
+
+</head>
+<body>
+
+<div class="container">
+
+    <div class="row">
+
+        <div class="col-md-12">
+            <h4 class="mb-3">Password Settings</h4>
+            <form class="needs-validation" novalidate="">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="fieldLength">Password Length</label>
+                        <input type="number" class="form-control" id="fieldLength" placeholder="" value="10" required="">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="fieldMinNumbers">Minimum Numbers</label>
+                        <input type="number" class="form-control" id="fieldMinNumbers" placeholder="" value="2" required="">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="fieldMinUppercase">Minimum Uppercase</label>
+                        <input type="number" class="form-control" id="fieldMinUppercase" placeholder="" value="2" required="">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="fieldMinLowercase">Minimum Lowercase</label>
+                        <input type="number" class="form-control" id="fieldMinLowercase" placeholder="" value="2" required="">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="fieldMinSpecialChars">Minimum Special Characters</label>
+                        <input type="number" class="form-control" id="fieldMinSpecialChars" placeholder="" value="2" required="">
+                    </div>
+                </div>
+
+                <hr>
+
+                <button class="btn btn-primary btn-lg btn-block" type="button" id="buttonGenerate">Generate Password</button>
+
+                <hr>
+
+                <h4>Generated Password:</h4>
+                <input type="text" class="form-control" readonly="readonly" id="fieldGeneratedPassword" />
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function getRndInteger(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) ) + min;
+    }
+
+    function PasswordGenerator() {
+
+        var that = this;
+
+        const asciiRanges = {
+            numbers: [48, 57],
+            uppercase: [65, 90],
+            lowercase: [97, 122],
+            specialChars: [33, 47]
+        };
+
+        function getCharacterFromRange(rangeName) {
+            return String.fromCharCode(getRndInteger(asciiRanges[rangeName][0], asciiRanges[rangeName][1]));
+        }
+
+        function getRandomChars(passwordSettings) {
+
+            var chars = [];
+
+            var charTypeSum = Object.values(passwordSettings.requiredCharacterTypes).reduce((a, b) => a + b, 0);
+            if (charTypeSum > passwordSettings.length) {
+                throw "The sum of the required character types exceeds the requested length of the password.";
+            }
+
+            if (charTypeSum < passwordSettings.length) {
+                var keys = Object.keys(passwordSettings.requiredCharacterTypes);
+                for (var i = charTypeSum; i <= passwordSettings.length; i++) {
+                    passwordSettings.requiredCharacterTypes[keys[getRndInteger(0, keys.length)]] += 1;
+                }
+            }
+
+            for (var key in passwordSettings.requiredCharacterTypes) {
+                var charsOfTypeLength = passwordSettings.requiredCharacterTypes[key];
+                for (y = 0; y < charsOfTypeLength; y++) {
+
+                    var char = getCharacterFromRange(key);
+                    chars.push(char);
+
+                    passwordSettings.requiredCharacterTypes[key]--;
+                }
+            }
+
+            return chars;
+        }
+
+        function getPasswordFromChars(arrChars) {
+
+            var password = [];
+            while (arrChars.length > 0) {
+                var index = getRndInteger(0, arrChars.length);
+                var char = arrChars[index];
+                password.push(char);
+                arrChars.splice(index, 1);
+            }
+
+            return password.join('');
+        }
+
+        this.generatePassword = function(length=10, minNumbers=2, minUppercase=2, minLowercase=2, minSpecialChars=2) {
+            passwordSettings = {
+                length: length,
+                requiredCharacterTypes: {
+                    numbers: minNumbers,
+                    uppercase: minUppercase,
+                    lowercase: minLowercase,
+                    specialChars: minSpecialChars
+                }
+            };
+
+            var chars = getRandomChars(passwordSettings);
+            var password = getPasswordFromChars(chars);
+
+            return password;
+        }
+    }
+
+    var pwgen = new PasswordGenerator();
+
+    document.getElementById("buttonGenerate").addEventListener('click', function() {
+
+        var settings = {
+            length: +document.getElementById('fieldLength').value,
+            numbers: +document.getElementById('fieldMinNumbers').value,
+            uppercase: +document.getElementById('fieldMinUppercase').value,
+            lowercase: +document.getElementById('fieldMinLowercase').value,
+            specialChars: +document.getElementById('fieldMinSpecialChars').value
+        }
+
+        console.log(settings);
+
+        var pw = pwgen.generatePassword(
+            settings.length,
+            settings.numbers,
+            settings.uppercase,
+            settings.lowercase,
+            settings.specialChars);
+
+        document.getElementById("fieldGeneratedPassword").value = pw;
+    });
+
+</script>
+
+</body>
+</html>
