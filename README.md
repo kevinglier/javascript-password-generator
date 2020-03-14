@@ -1,9 +1,5 @@
-# JavascriptPasswordGenerator
-My implementation of a simple password generator in Javascript.
+# Javascript Password Generator
+My implementation of a simple password generator in JavaScript.
 
-
+## Demo
 https://kevinglier.github.io/javascript-password-generator/index.html
-
-
-First state:
-https://codepen.io/anon/pen/jpYXGR
